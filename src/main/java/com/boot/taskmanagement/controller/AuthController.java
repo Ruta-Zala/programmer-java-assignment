@@ -23,14 +23,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
-    Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
-    if (existingUser.isPresent()) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+        Optional<User> existingUser = userRepository.findByUsername(user.getUsername());
+        if (existingUser.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
+        }
+        user.setPassword(encoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
-    user.setPassword(encoder.encode(user.getPassword()));
-    userRepository.save(user);
-    return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-}
 
     @PostMapping("/login")
     public String login(@RequestBody User user) {

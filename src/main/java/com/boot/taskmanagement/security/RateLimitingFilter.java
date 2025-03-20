@@ -22,7 +22,7 @@ public class RateLimitingFilter implements Filter {
 
     private Bucket getBucket(String ip) {
         return buckets.computeIfAbsent(ip, k -> Bucket4j.builder()
-            .addLimit(Bandwidth.classic(10, Refill.greedy(10, Duration.ofMinutes(1))))
+            .addLimit(Bandwidth.classic(30, Refill.greedy(30, Duration.ofMinutes(1))))
             .build());
     }
 
