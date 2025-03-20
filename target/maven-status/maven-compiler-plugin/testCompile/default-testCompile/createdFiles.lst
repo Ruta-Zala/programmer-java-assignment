@@ -1,0 +1,4 @@
+com/boot/taskmanagement/controller/TaskControllerTest.class
+com/boot/taskmanagement/controller/UserControllerTest.class
+com/boot/taskmanagement/TaskmanagementApplicationTests.class
+com/boot/taskmanagement/controller/AuthControllerTest.class
