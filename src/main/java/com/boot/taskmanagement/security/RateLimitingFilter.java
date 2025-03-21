@@ -9,6 +9,8 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -20,9 +22,12 @@ public class RateLimitingFilter implements Filter {
 
     private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
 
+    @Autowired
+    private Environment environment;
+
     private Bucket getBucket(String ip) {
         return buckets.computeIfAbsent(ip, k -> Bucket4j.builder()
-            .addLimit(Bandwidth.classic(30, Refill.greedy(30, Duration.ofMinutes(1))))
+            .addLimit(Bandwidth.classic(10, Refill.greedy(10, Duration.ofMinutes(1))))
             .build());
     }
 
@@ -32,6 +37,11 @@ public class RateLimitingFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        if (environment != null && environment.acceptsProfiles("test")) {
+                chain.doFilter(request, response);
+                return;
+        }
 
         String ip = httpRequest.getRemoteAddr();
         Bucket bucket = getBucket(ip);

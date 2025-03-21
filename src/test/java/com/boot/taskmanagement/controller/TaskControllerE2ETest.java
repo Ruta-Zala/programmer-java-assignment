@@ -36,7 +36,6 @@ public class TaskControllerE2ETest {
     @BeforeEach
     public void setup() {
       restTemplate.delete("/api/tasks/clear");
-        // Clear any existing data if needed
         registerUser("user1", "pass123", "USER");
         registerUser("admin1", "admin123", "ADMIN");
     }
@@ -82,7 +81,6 @@ public class TaskControllerE2ETest {
         new HttpEntity<>(userHeaders), String.class);
         assertEquals(HttpStatus.OK, getAllResponse.getStatusCode());
 
-        // ✅ Corrected: Deserialize as List of Maps instead of String[]
         List<Map<String, Object>> tasks = objectMapper.readValue(getAllResponse.getBody(), new TypeReference<List<Map<String, Object>>>() {});
         assertEquals(1, tasks.size());
 
@@ -161,17 +159,13 @@ public class TaskControllerE2ETest {
 
         String responseBody = response.getBody();
         
-        // ✅ Since login returns plain text, we check if it's "Invalid credentials"
         if ("Invalid credentials".equals(responseBody)) {
             fail("Login failed due to incorrect credentials");
             return null;
         }
 
-        return responseBody; // ✅ Now returning the token correctly
+        return responseBody;
     }
-
-
-
 
     private boolean containsTaskId(String[] tasks, String taskId) throws Exception {
         for (String taskJson : tasks) {
